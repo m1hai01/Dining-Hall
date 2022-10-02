@@ -3,7 +3,7 @@ using Dining_Hall.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<IHall,DiningHall>();
+builder.Services.AddSingleton<IHall,DiningHall>();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -26,5 +26,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+//allow firstly start kitchen 
+Thread.Sleep(1000);
+
+Task.Run(() =>
+{
+    using var serviceScope = app.Services.CreateScope();
+    var services = serviceScope.ServiceProvider;
+    var _ = services.GetRequiredService<IHall>();
+});
 
 app.Run();

@@ -5,13 +5,13 @@ namespace Dining_Hall.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class DinigHallController : ControllerBase
+    public class DiningHallController : ControllerBase
     {
      
 
-        private readonly ILogger<DinigHallController> _logger;
+        private readonly ILogger<DiningHallController> _logger;
 
-        public DinigHallController(ILogger<DinigHallController> logger)
+        public DiningHallController(ILogger<DiningHallController> logger)
         {
             _logger = logger;
         }
@@ -20,7 +20,7 @@ namespace Dining_Hall.Controllers
         [HttpPost("Distribution")]
         public void Distribution([FromBody] ReturnOrder order)
         {
-
+            _logger.LogInformation($"Received order {order.order_id}");
         }
 
     }
