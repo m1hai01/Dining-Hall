@@ -22,8 +22,9 @@ namespace Dining_Hall.Services
             httpClient.BaseAddress = new Uri("http://host.docker.internal:8081/");
             //_logger.LogInformation($"Constructor start ");
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
+                Thread.Sleep(500);
                // _logger.LogInformation($"Enter for loop for constructor ");
                 Task.Run(() => GenerateOrder());
             }
@@ -59,6 +60,7 @@ namespace Dining_Hall.Services
 
                 };
                 Task.Run(() => SendOrder(order));
+                Thread.Sleep(2000);
             }
         }
 
