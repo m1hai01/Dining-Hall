@@ -13,19 +13,22 @@ namespace Dining_Hall.Services
         private Random rnd;
         private HttpClient httpClient;
         private readonly ILogger<DiningHall> _logger;
-        private RestClient restClient = new RestClient("http://host.docker.internal:8081/");
+        
 
         public DiningHall(ILogger<DiningHall> logger)
         {
             _logger = logger;
             httpClient = new HttpClient();
+            //where request go
             httpClient.BaseAddress = new Uri("http://host.docker.internal:8081/");
             //_logger.LogInformation($"Constructor start ");
 
             for (int i = 0; i < 5; i++)
             {
                 Thread.Sleep(500);
-               // _logger.LogInformation($"Enter for loop for constructor ");
+                // _logger.LogInformation($"Enter for loop for constructor ");
+
+                // turn on threads that generate orders
                 Task.Run(() => GenerateOrder());
             }
 
@@ -33,6 +36,7 @@ namespace Dining_Hall.Services
         }
         public void GenerateOrder()
         {
+            //in body of request we generate order and it contain:
             rnd = new Random();
             var priority = this.priority[rnd.Next(0, 5)];
             var tables = this.tables[rnd.Next(0, 10)];
@@ -47,7 +51,8 @@ namespace Dining_Hall.Services
             }
             while (true)
             {
-                Thread.Sleep(2000);
+                //use while for permanently sending orders(for program doesn't stop)
+                Thread.Sleep(2000);// ca sa sbiveasca abaroatele
                 //_logger.LogInformation($"While in generate order ");
                 var order = new Order
                 {
@@ -59,6 +64,7 @@ namespace Dining_Hall.Services
                     max_wait = rnd.Next(1, 50)
 
                 };
+                
                 Task.Run(() => SendOrder(order));
                 Thread.Sleep(2000);
             }
@@ -67,11 +73,9 @@ namespace Dining_Hall.Services
         public void SendOrder(Order order)
         {
             _logger.LogInformation($"SendOrder{order.order_id} ");
-           // httpClient.PostAsJsonAsync("Kitchen/Order", order);
-           var request = new RestRequest("Kitchen/Order").AddJsonBody(order);
-           restClient.Post(request);
+            httpClient.PostAsJsonAsync("Kitchen/Order", order);//in body of request add order as json 
+
         }
 
-        
     }
 }
